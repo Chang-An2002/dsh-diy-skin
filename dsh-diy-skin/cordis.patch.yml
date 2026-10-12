@@ -1,0 +1,4 @@
+# DeepSeek brand decoration bundle: inserts its one plugin row into the profile.
+- insert:
+    - id: deepseek-decor
+      name: 'dsh-diy-skin'

@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DeepSeek 品牌主题 · 视觉预览</title>
+<style>
+  /* ---- stock DSH palette (before) ---- */
+  :root {
+    --stock-bg-base:#fff; --stock-bg-layer-1:#fff; --stock-bg-layer-2:#fff; --stock-bg-module:#f5f6f7;
+    --stock-label-primary:#0f1115; --stock-label-secondary:#61666b; --stock-label-tertiary:#81858c;
+    --stock-border-l2:#0000001a; --stock-border-l4:#00000029;
+    --stock-button-primary:#0f1115; --stock-button-primary-hover:#43454a;
+    --stock-hover:#2631480f;
+  }
+  body[data-ds-dark-theme] {
+    --stock-bg-base:#151517; --stock-bg-layer-1:#232324; --stock-bg-layer-2:#2c2c2e; --stock-bg-module:#353638;
+    --stock-label-primary:#f9fafb; --stock-label-secondary:#adb2b8; --stock-label-tertiary:#81858c;
+    --stock-border-l2:#ffffff1f; --stock-border-l4:#fff3;
+    --stock-button-primary:#f9fafb; --stock-button-primary-hover:#ebeef2;
+    --stock-hover:#ffffff14;
+  }
+
+  /* ---- DeepSeek brand layer (after) ---- */
+  body[data-brand="on"] {
+    --bg-base:#ffffff; --bg-layer-1:#fdfeff; --bg-layer-2:#ffffff; --bg-module:#f4f7fd;
+    --label-primary:#0f1a34; --label-secondary:#4a5772; --label-tertiary:#6b7893;
+    --border-l2:#1d4ed824; --border-l4:#1d4ed83d;
+    --btn-primary:#4176e6; --btn-primary-hover:#3a68d4; --hover:#1d4ed80f;
+    --brand:#4176e6; --brand-soft:#edf3fe;
+  }
+  body[data-brand="on"][data-ds-dark-theme] {
+    --bg-base:#0d1424; --bg-layer-1:#111a2e; --bg-layer-2:#16203a; --bg-module:#1c2846;
+    --label-primary:#eef2fb; --label-secondary:#a9b6d0; --label-tertiary:#7f8da8;
+    --border-l2:#ffffff20; --border-l4:#ffffff38;
+    --btn-primary:#5686fe; --btn-primary-hover:#6f97ff; --hover:#ffffff1a;
+    --brand:#7aaaff; --brand-soft:#1b2a52;
+  }
+  body[data-brand="off"] {
+    --bg-base:var(--stock-bg-base); --bg-layer-1:var(--stock-bg-layer-1); --bg-layer-2:var(--stock-bg-layer-2);
+    --bg-module:var(--stock-bg-module); --label-primary:var(--stock-label-primary);
+    --label-secondary:var(--stock-label-secondary); --label-tertiary:var(--stock-label-tertiary);
+    --border-l2:var(--stock-border-l2); --border-l4:var(--stock-border-l4);
+    --btn-primary:var(--stock-button-primary); --btn-primary-hover:var(--stock-button-primary-hover);
+    --hover:var(--stock-hover); --brand:#4176e6; --brand-soft:#edf3fe;
+  }
+
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg-base); color:var(--label-primary);
+    font:14px/1.55 "Segoe UI","Microsoft YaHei",system-ui,sans-serif;
+    transition:background .18s ease,color .18s ease;
+  }
+  .bar {
+    position:sticky; top:0; z-index:9; display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    padding:12px 20px; background:color-mix(in srgb,var(--bg-base) 88%,transparent);
+    backdrop-filter:blur(10px); border-bottom:.5px solid var(--border-l2);
+  }
+  .bar h1 { font-size:14px; font-weight:600; margin:0 auto 0 0; letter-spacing:.02em; }
+  button.t {
+    height:30px; padding:0 12px; border-radius:8px; cursor:pointer; font:inherit; font-size:12.5px;
+    color:var(--label-primary); background:var(--bg-module); border:.5px solid var(--border-l2);
+  }
+  button.t:hover { background:var(--hover); }
+  button.t[aria-pressed="true"] { color:#fff; background:var(--btn-primary); border-color:transparent; }
+  main { padding:24px 20px 64px; max-width:1180px; margin:0 auto; }
+  section { margin-bottom:34px; }
+  h2 { font-size:12px; font-weight:600; letter-spacing:.10em; text-transform:uppercase;
+       color:var(--label-tertiary); margin:0 0 14px; }
+  .grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(216px,1fr)); }
+  .card { background:var(--bg-layer-2); border:.5px solid var(--border-l4); border-radius:12px; padding:16px; }
+  .card .cap { font-size:12px; color:var(--label-tertiary); margin-bottom:10px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .btn { height:34px; padding:0 16px; border:0; border-radius:8px; font:inherit; font-size:13px;
+         color:#fff; background:var(--btn-primary); cursor:pointer; }
+  .btn:hover { background:var(--btn-primary-hover); }
+  .btn.info { background:var(--brand); }
+  .btn.ghost { color:var(--label-primary); background:var(--bg-module); border:.5px solid var(--border-l2); }
+  a.lnk { color:var(--brand); text-decoration:none; border-bottom:1px solid color-mix(in srgb,var(--brand) 40%,transparent); }
+  .chip { display:inline-flex; align-items:center; gap:6px; height:24px; padding:0 9px; border-radius:999px;
+          font-size:12px; font-variant-numeric:tabular-nums; color:var(--label-secondary);
+          background:var(--bg-module); border:.5px solid var(--border-l2); }
+  .chip b { color:var(--label-primary); font-weight:500; }
+  .dot { width:6px; height:6px; border-radius:50%; background:#22c55e; }
+  .dot.idle { background:#d4d4d4; } .dot.warn { background:#f59e0b; } .dot.err { background:#f23c3c; }
+  body[data-ds-dark-theme] .dot.idle { background:#545557; }
+  .sw-row { display:flex; align-items:center; gap:10px; margin-bottom:7px; font-size:12px; }
+  .sw { width:26px; height:26px; border-radius:7px; border:.5px solid var(--border-l2); flex:none; }
+  code { font-family:Consolas,ui-monospace,monospace; font-size:11.5px; color:var(--label-secondary); }
+  .hero { display:flex; gap:22px; align-items:center; flex-wrap:wrap; }
+  .hero .txt { flex:1; min-width:240px; }
+  .art-tray { display:flex; gap:18px; align-items:flex-end; flex-wrap:wrap;
+              background:var(--bg-module); border:.5px solid var(--border-l2); border-radius:12px; padding:18px; }
+  .art-cell { text-align:center; color:var(--label-tertiary); font-size:11px; }
+  .art-cell > div:first-child { margin-bottom:6px; }
+  .banner { border-radius:12px; padding:18px 20px; background:
+      linear-gradient(120deg,color-mix(in srgb,var(--brand) 10%,transparent),transparent 62%),var(--bg-layer-2);
+      border:.5px solid var(--border-l4); }
+  .note { font-size:12px; color:var(--label-tertiary); margin-top:10px; }
+  /* Staged copy of the plugin's corner picture layer. The real rules use
+     position:fixed against the viewport; here #artLayer is the containing
+     block, so the same geometry is reproduced inside the mock conversation. */
+  #artLayer { position:absolute; inset:0; overflow:hidden; border-radius:10px;
+              --dsd-art-opacity:.18; pointer-events:none; }
+  body[data-ds-dark-theme] #artLayer { --dsd-art-opacity:.22; }
+  .art { position:absolute; pointer-events:none; background-repeat:no-repeat;
+         background-position:center; background-size:contain; opacity:var(--dsd-art-opacity);
+         filter:blur(1.2px) saturate(.95); mix-blend-mode:luminosity;
+         -webkit-mask-image:radial-gradient(120% 110% at 50% 50%,#000 52%,transparent 100%);
+         mask-image:radial-gradient(120% 110% at 50% 50%,#000 52%,transparent 100%); }
+  .art-portrait { right:1%; bottom:-3%; width:38%; height:74%;
+                  background-image:var(--dsd-art-portrait); background-position:bottom right; }
+  .art-meme { right:17%; top:8%; width:22%; height:26%;
+              background-image:var(--dsd-art-meme); background-position:top right; }
+  .art-chibi { left:2%; bottom:-2%; width:24%; height:38%;
+               background-image:var(--dsd-art-chibi); background-position:bottom left; }
+  #artLayer[data-art='on']::after { content:'图片已加载'; position:absolute; left:8px; top:6px;
+               font-size:10px; color:var(--label-tertiary); }
+  textarea { width:100%; min-height:64px; resize:vertical; font:12px/1.5 Consolas,monospace;
+             color:var(--label-primary); background:var(--bg-module); border:.5px solid var(--border-l2);
+             border-radius:8px; padding:8px; }
+</style>
+</head>
+<body data-brand="off">
+
+<div class="bar">
+  <h1>DeepSeek 品牌主题 · 视觉预览</h1>
+  <button class="t" id="tBrand" aria-pressed="false">品牌配色：关</button>
+  <button class="t" id="tDark" aria-pressed="false">深色模式：关</button>
+</div>
+
+<main>
+  <section>
+    <h2>配色对比</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="cap">主操作 / 链接</div>
+        <div class="row">
+          <button class="btn">新建会话</button>
+          <button class="btn ghost">次要</button>
+        </div>
+        <div class="note"><a class="lnk" href="#">文档链接</a> · 品牌色接管主操作</div>
+      </div>
+      <div class="card">
+        <div class="cap">表面层次</div>
+        <div class="row">
+          <div class="sw" style="background:var(--bg-base)"></div>
+          <div class="sw" style="background:var(--bg-layer-1)"></div>
+          <div class="sw" style="background:var(--bg-layer-2)"></div>
+          <div class="sw" style="background:var(--bg-module)"></div>
+        </div>
+        <div class="note"><code>base / layer-1 / layer-2 / module</code></div>
+      </div>
+      <div class="card">
+        <div class="cap">文字层级</div>
+        <div style="color:var(--label-primary);font-size:15px">主要文字 label-primary</div>
+        <div style="color:var(--label-secondary);font-size:13px">次要文字 label-secondary</div>
+        <div style="color:var(--label-tertiary);font-size:12px">三级文字 label-tertiary</div>
+      </div>
+      <div class="card">
+        <div class="cap">品牌色梯级</div>
+        <div class="row" style="gap:0">
+          <div class="sw" style="background:#edf3fe;border-radius:7px 0 0 7px"></div>
+          <div class="sw" style="background:#b7c8fe;border-radius:0"></div>
+          <div class="sw" style="background:#7aaaff;border-radius:0"></div>
+          <div class="sw" style="background:#4176e6;border-radius:0"></div>
+          <div class="sw" style="background:#2563eb;border-radius:0 7px 7px 0"></div>
+        </div>
+        <div class="note"><code>deepseek-100/300/400/500/600</code></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>角色插画（原创 SVG，非贴图）</h2>
+    <div class="art-tray" id="tray"></div>
+    <div class="note">左侧：鲸尾标记（侧栏徽标 / 水印）。中：Q 版半身像（输入框角落）。右：水下鲸群水印（背景装饰）。造型按人设的三视图与配色重画，未直接使用你上传的图片。</div>
+  </section>
+
+  <section>
+    <h2>余额芯片</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="cap">正常</div>
+        <div class="chip"><span class="dot"></span>余额 <b>¥ 128.40</b></div>
+      </div>
+      <div class="card">
+        <div class="cap">读取中 / 未配置</div>
+        <div class="chip"><span class="dot idle"></span>余额 <b>…</b></div>
+      </div>
+      <div class="card">
+        <div class="cap">读取失败（可点击重试）</div>
+        <div class="chip"><span class="dot err"></span>余额 <b>—</b></div>
+      </div>
+      <div class="card">
+        <div class="cap">余额不足告警</div>
+        <div class="chip"><span class="dot warn"></span>余额 <b>¥ 2.10</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>侧栏与输入框实际效果</h2>
+    <div class="banner">
+      <div style="display:flex;gap:16px">
+        <div style="width:214px;flex:none;border:.5px solid var(--border-l2);border-radius:10px;padding:12px;background:var(--bg-layer-2)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <span id="brandMark"></span>
+            <b style="font-size:13px">DeepSeek Harness</b>
+          </div>
+          <div style="height:30px;border-radius:8px;background:var(--btn-primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;margin-bottom:10px">新建会话</div>
+          <div style="height:26px;border-radius:7px;background:var(--hover);font-size:12.5px;display:flex;align-items:center;padding:0 8px;margin-bottom:4px">今天</div>
+          <div style="height:26px;border-radius:7px;font-size:12.5px;display:flex;align-items:center;padding:0 8px;color:var(--label-secondary)">昨天</div>
+          <div style="margin-top:14px;padding-top:10px;border-top:.5px solid var(--border-l2);display:flex;align-items:center;gap:8px">
+            <span id="railMark"></span>
+            <span class="chip" style="margin-left:auto"><span class="dot"></span>余额 <b>¥ 128.40</b></span>
+          </div>
+        </div>
+        <div style="flex:1;min-width:240px;display:flex;flex-direction:column;position:relative;overflow:hidden;border-radius:10px">
+          <div id="artLayer" aria-hidden="true">
+            <span class="art art-portrait"></span>
+            <span class="art art-meme"></span>
+            <span class="art art-chibi"></span>
+          </div>
+          <div style="flex:1;border:.5px solid var(--border-l2);border-radius:10px;padding:14px;background:transparent;position:relative">
+            <div style="font-size:12.5px;color:var(--label-secondary);margin-bottom:8px">DEEPSEEK</div>
+            <div style="font-size:13.5px">帮我按 DeepSeek 品牌色把界面装修一下。</div>
+            <div style="margin-top:22vh;font-size:13.5px;color:var(--label-secondary)">图片以低透明度+轻微模糊压在内容之下，不遮挡文字，也不接收点击。</div>
+          </div>
+          <div style="margin-top:10px;border:.5px solid var(--border-l4);border-radius:10px;padding:10px;background:var(--bg-layer-1);display:flex;align-items:flex-end;gap:10px">
+            <span class="chip"><span class="dot"></span>余额 <b>¥ 128.40</b></span>
+            <span style="margin-left:auto" id="dockArt"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>余额数据源 · 已解决，无需 API key</h2>
+    <div class="card">
+      <div style="font-size:13px;margin-bottom:8px">
+        DSH 的账号控制器本身就提供余额查询，插件通过
+        <code>ctx.remote.account.getBalance({ version, locale, timezoneOffsetSeconds })</code> 读取，
+        和「设置 → 账户」显示的是同一个数。
+      </div>
+      <div style="font-size:12.5px;color:var(--label-secondary)">
+        返回结构：<code>{ ok, value: { value: [...充值钱包], bonusWallets: [...赠送钱包] } }</code>。
+        多钱包按币种累加，优先显示 CNY；金额格式对齐 Platform Web（两位小数、千分位、次分级显示 <code>&lt;¥0.01</code>）。
+      </div>
+      <div class="note">因此不需要 <code>sk-</code> 开头的 API key，也不需要你提供任何凭证。</div>
+    </div>
+  </section>
+</main>
+
+<script>
+// ---- artwork injected from the plugin's own source strings, so the preview
+// ---- always matches what the plugin draws.
+const PLUGIN = `..\\dsh-deepseek-decor\\client.js`;
+
+const ART = {
+  tail(size, opacity, uid) {
+    const g = 'pt' + size + (uid || '');
+    const fluke =
+      'M32 47 C34 42 36 36 39 31 C42 26 46 22 50 19 C52 18 54 17 56 16 ' +
+      'C57 19 57 23 55 27 C53 32 49 37 45 40 C41 44 37 46 32 47 Z';
+    return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" aria-hidden="true" style="display:block;opacity:${opacity}">
+<defs><linearGradient id="${g}" x1="0" y1="1" x2="1" y2="0">
+<stop offset="0" stop-color="#1b2a52"/><stop offset="0.55" stop-color="#4d7ff0"/><stop offset="1" stop-color="#8fb6ff"/></linearGradient></defs>
+<path d="${fluke}" fill="url(#${g})"/>
+<g transform="translate(64 0) scale(-1 1)"><path d="${fluke}" fill="url(#${g})"/></g>
+<path d="M32 47 C34 42 36 36 39 31 C42 26 46 22 50 19 M32 47 C30 42 28 36 25 31 C22 26 18 22 14 19" stroke="#c9dcff" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.5"/>
+<path d="M32 47 C31 44 31 41 32 38 C33 41 33 44 32 47 Z" fill="#1b2a52" opacity="0.35"/>
+</svg>`;
+  },
+};
+
+document.getElementById('tray').innerHTML =
+  `<div class="art-cell"><div>${ART.tail(52, 1, 'a')}</div>鲸尾标记</div>` +
+  `<div class="art-cell"><div>${ART.tail(26, 0.85, 'b')}</div>小尺寸（侧栏）</div>` +
+  `<div class="art-cell"><div>${ART.tail(15, 0.8, 'c')}</div>徽标尺寸</div>`;
+
+// The three supplied pictures, shown at the opacity the plugin uses so the
+// corner treatment can be judged before installing.
+document.getElementById('brandMark').innerHTML = ART.tail(20, 1, 'brand');
+document.getElementById('railMark').innerHTML = ART.tail(16, 0.85, 'rail');
+document.getElementById('dockArt').innerHTML = ART.tail(28, 0.5, 'dock');
+
+// ---- the corner picture layer, staged inside the mock conversation so the
+// ---- same geometry the plugin uses can be judged before installing.
+const layer = document.getElementById('artLayer');
+for (const key of ['portrait', 'meme', 'chibi']) {
+  const url = 'art/' + key + '.webp';
+  const probe = new Image();
+  probe.onload = () => {
+    layer.style.setProperty('--dsd-art-' + key, 'url("' + url + '")');
+    layer.dataset.art = 'on';
+  };
+  probe.onerror = () => {
+    layer.dataset.art = 'missing';
+  };
+  probe.src = url;
+}
+
+const body = document.body;
+const tBrand = document.getElementById('tBrand');
+const tDark = document.getElementById('tDark');
+
+// URL presets so a headless screenshot can request a specific variant:
+//   index.html?brand=on&theme=dark
+const params = new URLSearchParams(location.search);
+if (params.get('brand') === 'on') body.dataset.brand = 'on';
+if (params.get('theme') === 'dark') body.setAttribute('data-ds-dark-theme', '');
+
+function sync() {
+  const brand = body.dataset.brand === 'on';
+  tBrand.textContent = '品牌配色：' + (brand ? '开' : '关');
+  tBrand.setAttribute('aria-pressed', String(brand));
+  const dark = body.hasAttribute('data-ds-dark-theme');
+  tDark.textContent = '深色模式：' + (dark ? '开' : '关');
+  tDark.setAttribute('aria-pressed', String(dark));
+  document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+}
+tBrand.addEventListener('click', () => { body.dataset.brand = body.dataset.brand === 'on' ? 'off' : 'on'; sync(); });
+tDark.addEventListener('click', () => {
+  if (body.hasAttribute('data-ds-dark-theme')) body.removeAttribute('data-ds-dark-theme');
+  else body.setAttribute('data-ds-dark-theme', '');
+  sync();
+});
+sync();
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# pnpm's content-addressable store. A cache, and one that runs to gigabytes on a
+# machine that has actually installed something.
+.pnpm-store/
+
+# Dependencies, wherever they turn up.
+node_modules/
+
+# Extracted copies of the app's own packages, kept while working on the plugin as
+# reference material — the real token names, the real selectors, the real defaults.
+# They are DeepSeek's code, not ours, so they do not belong in a repository we
+# publish; the scripts that extract what we need live in analysis/ instead.
+ref/
+
+# Scratch output from the analysis scripts, and anything else generated.
+*.log
+*.tmp
+out/
+
+# Editor and OS noise.
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store
