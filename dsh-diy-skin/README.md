@@ -120,3 +120,30 @@ Did you mean to import ".../dsh-diy-skin/index.js"?
 
 - **[THEME-SURFACE.md](THEME-SURFACE.md)** —— 应用自身的可调 token 与消费方全景
 
+## 手动安装（面板装不了时）
+
+面板安装失败，或者你想自己控制 profile，就手工做这四步。**第 3 步最容易漏**，漏了插件不会出现在列表里。
+
+1. 打开 profile 目录（Windows 默认 `%USERPROFILE%\.dsh\profiles\desktop`）的 `package.json`，在 `dependencies` 里加一行：
+   ```json
+   "dsh-diy-skin": "^1.30.2"
+   ```
+2. **同一个文件**里，把它加进 `dsh.profile.bundles` 列表：
+   ```json
+   "dsh": { "profile": { "bundles": [ "@deepseek-ai/dsh-base", "@deepseek-ai/dsh-web-app", "dsh-diy-skin" ] } }
+   ```
+3. 在 profile 目录跑一次 `pnpm install`。
+4. **重启应用**（客户端 bundle 是开机读的）。
+
+## 更新
+
+新版本不会自动到达，取决于你怎么装的：
+
+- **面板装的**：在「插件」里对该插件执行更新或重装。
+- **pnpm 有"新版本冷却期"**（`minimumReleaseAge`）：刚发布的版本默认在一段时间内不会被解析，所以"卸载再装回来"也可能仍是旧版。**等冷却期过去再装是正常的，不用当成故障。**
+- **作者本人**可以跳过冷却：在 profile 的 `pnpm-workspace.yaml` 里写
+  ```yaml
+  minimumReleaseAgeExclude:
+    - dsh-diy-skin
+  ```
+  然后 `pnpm update dsh-diy-skin`。必须**不带版本号**：`dsh-diy-skin@1.30.0` 这种写法只放行那一个版本，新版本照样被挡。

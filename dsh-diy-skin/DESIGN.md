@@ -725,3 +725,21 @@ JSON.stringify(window.__DSH_BOOT__).includes('dsh-diy-skin')
 **为什么不用 `pnpm.overrides` 把"版本范围"指向本地**：试过了，这个 pnpm 版本不接受 override 里的
 `link:`（装完之后 `node_modules/dsh-diy-skin` 没有 LinkType，是真实拷贝）。所以只能二选一，
 而"别人能按名字装"是**包的属性**，不取决于自己 profile 怎么写。
+
+### pnpm 的新版本冷却期（2026-10 记）
+
+发布 1.30.1 之后，profile 里 `pnpm update dsh-diy-skin` 报 `Already up to date`，装回来仍是 1.30.0。
+不是面板的问题，也不是 registry：**pnpm 11 默认有 `minimumReleaseAge`**，刚发布的版本在冷却期内不会被解析。
+第一次安装时 pnpm 自己往 profile 的 `pnpm-workspace.yaml` 写过一行豁免，但它是精确到版本的：
+
+```yaml
+minimumReleaseAgeExclude:
+  - dsh-diy-skin@1.30.0     # 精确到版本，所以 1.30.1 依然被挡
+```
+
+**要放行这个包的所有版本，必须写不带版本号的 `- dsh-diy-skin`。** 写完 `pnpm update` 立刻拿到 1.30.1。
+
+对用户来说这个冷却期是好事：即使某次发布被劫持，也不会马上传开。所以文档只解释它、不教人绕过；
+作者本人排除自己的包是合理的。
+
+这次的教训是流程性的：**"卸载重装还是旧版"不等于装坏了**，先想到冷却期，再去查面板和 registry。
