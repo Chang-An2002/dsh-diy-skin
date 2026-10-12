@@ -1,7 +1,6 @@
 {
   "name": "dsh-diy-skin",
   "version": "1.30.0",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Chang-An2002/dsh-diy-skin.git",
