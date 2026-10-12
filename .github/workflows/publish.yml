@@ -1,0 +1,49 @@
+name: Publish to npm
+
+# Trusted publishing: npm accepts this workflow's identity (via OIDC) instead of a
+# token, so there is no long-lived credential to leak and no one-time password to
+# type. That is also why `id-token: write` is here and nothing else is.
+#
+# Setup, once, on npmjs.com: the package's Settings page → Trusted Publisher →
+# GitHub Actions → this repository, workflow `publish.yml`. After that a release is
+# a tag: bump the version in dsh-diy-skin/package.json, commit, then
+#   git tag v1.30.1 && git push --tags
+# The tag and the version must agree — npm rejects a version that already exists.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      # The tests are the gate, and they are the same ones run locally.
+      - name: Tests
+        working-directory: dsh-diy-skin
+        run: node test/client.test.mjs
+
+      # The shipped files must be exactly the ones the manifest claims.
+      - name: Release checklist
+        run: node analysis/pubcheck.mjs --strict
+
+      # Trusted publishing needs npm 11.5.1 or newer.
+      - name: npm
+        run: npm install --global npm@latest
+
+      - name: Publish
+        working-directory: dsh-diy-skin
+        run: npm publish --provenance

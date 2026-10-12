@@ -699,3 +699,29 @@ JSON.stringify(window.__DSH_BOOT__).includes('dsh-diy-skin')
 - **hook 不能在提前返回之后**。这是本插件唯一一次造成"界面卡死、无法退出"的事故，详见 [第 3 节那个陷阱](#一个把面板彻底搞没了的-react-陷阱)。规则很简单：组件里所有 hook 都写在第一个 `return` 之前，副作用该由"永远挂载的那个组件"承担。测试台现在会强制这条规则。
 - **模板字符串里的 CSS 注释不能出现反引号**。`STYLE_TEXT` 是一个模板字符串，注释里写 `` `fixed` `` 会直接把它闭合掉——我这次就这么踩了两回，症状是模块整段语法错误、测试全红。`node --check` 是发现它的最快方式。
 
+## 发布流程（每次发新版）
+
+前提：开发时 profile 里那一行的值是 `link:…`（指回这个工作目录），所以改代码重启即生效。
+
+1. **改代码**（`client.js` + `test/client.test.mjs`），重启应用肉眼确认。
+2. **升版本号**：`dsh-diy-skin/package.json`。修 bug 升末位（`1.30.1`），加功能升中位（`1.31.0`）。
+   **npm 拒绝发布已存在的版本**，所以这一步不能跳。
+3. **跑校验**：`node analysis/pubcheck.mjs --strict` 要 0 项待办；`node dsh-diy-skin/test/client.test.mjs` 全绿；
+   另外 `plugin-guards` / `blue-audit` / `palette-defaults` / `embed-consumers --check` 四条。
+4. **提交并推送**。
+5. **发布**：
+   - 手动：`cd dsh-diy-skin && npm publish`（会走一次 security key 的浏览器确认）。
+   - 自动（已配好 workflow `.github/workflows/publish.yml`）：`git tag v1.31.0 && git push --tags`，
+     GitHub Actions 用 trusted publishing 发布，**不需要 token、不需要 OTP**。tag 上的版本必须和
+     `package.json` 里的一致。
+6. **验一次发布物**：读 `https://registry.npmjs.org/dsh-diy-skin/latest`，核对 `version`、
+   `license`、有没有 `dependencies`、以及 `dist.shasum` 是否和 `npm publish` 输出的那串一致。
+   最彻底的一次是临时把 profile 那一行改成 `"dsh-diy-skin": "^1.31.0"` + `pnpm install --dir <profile>`，
+   重启看它能不能从 npm 装起来 —— 验完记得改回 `link:`。
+
+**用户不会自动拿到新版**：他们那条依赖是 `^1.30.0` 这样的范围，要在「插件」面板里更新/重装才会拉新的。
+这是好事 —— 发坏了不会瞬间推给所有人。
+
+**为什么不用 `pnpm.overrides` 把"版本范围"指向本地**：试过了，这个 pnpm 版本不接受 override 里的
+`link:`（装完之后 `node_modules/dsh-diy-skin` 没有 LinkType，是真实拷贝）。所以只能二选一，
+而"别人能按名字装"是**包的属性**，不取决于自己 profile 怎么写。
