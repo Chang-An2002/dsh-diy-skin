@@ -14,12 +14,17 @@
  * Usage: node analysis/theme-surface.mjs [path/to/app.asar] [out.md]
  */
 import { openSync, readFileSync, readSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// Where this script lives, so the report lands next to the plugin wherever the
+// repository has been moved to. It used to be an absolute path from one machine, which
+// broke the moment the project changed folders.
+const HERE = dirname(fileURLToPath(import.meta.url));
 
 const ASAR =
   process.argv[2] ?? 'C:\\Users\\pipi0\\AppData\\Local\\Programs\\DeepSeek Harness\\resources\\app.asar';
-const OUT =
-  process.argv[3] ??
-  'C:\\Users\\pipi0\\Documents\\deepseek-harness\\default-workspace\\dsh-diy-skin\\THEME-SURFACE.md';
+const OUT = process.argv[3] ?? join(HERE, '..', 'dsh-diy-skin', 'THEME-SURFACE.md');
 
 // ---------------------------------------------------------------- asar access
 const fd = openSync(ASAR, 'r');
