@@ -764,3 +764,82 @@ minimumReleaseAgeExclude:
 
 已整理成可提交给 DSH 的复现报告（环境：Windows、DSH 桌面端、pnpm 11.7.0）。这次不改功能，
 所以随下一次版本一起发布。
+
+## 安装方式的取舍（从 README 移入）
+
+这一节是给改这个插件的人看的：为什么这样装、早期写法踩过什么坑。安装本身只需要 README 的三行。
+
+## 安装（bundle 方式，当前采用）
+
+本插件已注册为 profile 的**一个真实 bundle**，因此会出现在 Plugin Manager 的「Installed」列表里并带开关。落地为三处改动：
+
+**1. profile 的 `package.json`** —— 加一条依赖，并把包名加进 bundles 列表：
+
+```json
+{
+  "dependencies": {
+    "dsh-diy-skin": "link:<本仓库的绝对路径>/dsh-diy-skin"
+  },
+  "dsh": { "profile": { "bundles": [
+    "@deepseek-ai/dsh-base",
+    "@deepseek-ai/dsh-web-app",
+    "dsh-diy-skin"
+  ] } }
+}
+```
+
+**2. 在 profile 目录跑一次 `pnpm install`** —— 解析 `link:` 依赖。
+
+**3. profile 的 `cordis.patch.yml`** —— 移除早先手写的那条 `insert`；插件行现在由 **bundle 自己的 patch**（`package.json` 的 `dsh.bundle.patch`）提供，用的是**裸包名**：
+
+```yaml
+- insert:
+    - id: deepseek-decor
+      name: 'dsh-diy-skin'
+```
+
+这三步等价于官方 `install_bundle` 所做的事，可用 `preview/register-bundle.py` 复现（默认干跑，加 `--apply` 才写）。
+
+### 为什么用 `link:` 而不是 `file:`
+
+实测两者差别：
+
+| 写法 | 能装上 | 工作目录改代码是否立即生效 |
+|---|---|---|
+| `file:<绝对路径>` | ✅ | ❌ 是**复制**，每次改都要重装 |
+| `link:<绝对路径>` | ✅ | ✅ 生成 junction，**实时生效** |
+
+因为后续还要反复调样式，选 `link:`——工作目录始终是唯一来源，改完只需刷新页面（若改了宿主半侧或 profile 配置才需要重启）。
+
+另外，`file:` 与 `link:` 都必须用**绝对路径**：相对路径里 `..` 的层数依赖 pnpm 的解析规则，我实测推错过两次，绝对路径没有歧义。
+
+### 早期的写法与它的坑
+
+最初我用「profile 补丁里插一条绝对路径行」的方式安装，踩了一个很隐蔽的坑，值得留着：
+
+DSH 加载器会把 `insert` 里**绝对路径**形式的 `name` 转成 `file://` URL 直接 import（`anchorInsertedPluginNames`，`dsh-app-boot/lib/index.js`），而 **ESM 不允许导入目录**：
+
+```
+Error: Directory import '...\dsh-diy-skin' is not supported resolving ES modules
+Did you mean to import ".../dsh-diy-skin/index.js"?
+```
+
+包里的 `exports["."]` 只在**按包名解析**时生效，对 `file://` 目录 URL 不起作用。写目录的后果是：宿主半侧从未挂载 → 没有 fiber → 不触发 `internal/plugin` 事件 → `client-modules` 的 `dsh.client` 扫描收不到这个包 → 客户端 bundle 从未进入 `__DSH_BOOT__` 的 `entries` → **界面零变化，且控制台没有任何报错**。整条链路静默断在第一环。
+
+改成指向 `index.js` 后能工作，但那只是补丁行方案；bundle 方式用裸包名，走的是标准解析路径，不存在这个问题。
+
+本包**刻意零依赖、且不导出 `Config`**：`Config` 需要 `@deepseek-ai/schemastery`，而它没有随安装目录发布；声明成依赖会让包管理器去 registry 拉一个未必匹配当前构建的版本，而 profile 依赖一旦解析失败，整个 profile 就启动不了。可调项因此写在本文档里，而不是走 `Config`。
+
+### 改源码为什么不热重载
+
+改 `client.js` 源码**必须重启应用**才生效：profile 的 HMR 是开着的，但 base 组合包把它配成 `root: []`——按官方文档，`[]` "仅保留显式注册的配置监听"，也就是**源码模块不在监听范围内**。想让源码改完自动热重载，可以在 profile 补丁里覆盖这一条：
+
+```yaml
+- id: hmr
+  config:
+    root: ["."]
+```
+
+### 零依赖与不导出 `Config`
+
+本包刻意零依赖、且不导出 `Config`：`Config` 需要 `@deepseek-ai/schemastery`，而它没有随安装目录发布；声明成依赖会让包管理器去 registry 拉一个未必匹配当前构建的版本，而 profile 依赖一旦解析失败，整个 profile 就启动不了。可调项因此写在文档里，而不是走 `Config`。

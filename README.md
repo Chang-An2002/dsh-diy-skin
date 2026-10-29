@@ -1,6 +1,8 @@
 # dsh-diy-skin
 
-一个给 DSH 用的 DeepSeek 品牌皮肤插件：把背景图片垫在整个界面下面、22 个配色旋钮、可以把自己的调色板存成命名方案、去白底、角落余额。零依赖，浏览器半边就是一个自包含的 bundle。
+[![npm](https://img.shields.io/npm/v/dsh-diy-skin?color=2f6fed)](https://www.npmjs.com/package/dsh-diy-skin) [![license](https://img.shields.io/npm/l/dsh-diy-skin)](dsh-diy-skin/LICENSE)
+
+一个给 DSH 用的 DeepSeek 品牌皮肤插件：把背景图片垫在整个界面下面、22 个配色旋钮、可以把自己的调色板存成命名方案、去白底、角落余额。零依赖，界面部分就是一个自包含的 bundle。
 
 ## 安装
 
@@ -10,7 +12,7 @@
 2. **重启应用**
 3. 左下角出现「背景」入口，点它开始编辑
 
-也可以手动改 profile 的 `package.json`：加一行 `"dsh-diy-skin": "^1.30.1"`，然后在 profile 目录跑 `pnpm install`。
+也可以手动改 profile 的 `package.json`：加一行 `"dsh-diy-skin": "^1.30.3"`，然后在 profile 目录跑 `pnpm install`。
 
 ## 实测范围
 
@@ -34,12 +36,12 @@
 |---|---|
 | `dsh-diy-skin/` | 插件本体（发布到 npm 的就是这个目录） |
 | `analysis/` | 校验脚本：发布检查、主题守卫、冻结色审计、从已安装应用里实测 token |
-| `preview/` | 宿主半导入检查、探针、logo 提取 |
+| `preview/` | 插件加载检查、探针、logo 提取 |
 
 ## 每次改动后跑这几条
 
 ```sh
-node analysis/fix-css-backticks.mjs --check   # （先跑这个，它会在需要时修）
+node analysis/fix-css-backticks.mjs --check   # 只检查；去掉 --check 才会真的修
 node dsh-diy-skin/test/client.test.mjs       # 74 条测试
 node analysis/plugin-guards.mjs               # 结构守卫
 node analysis/blue-audit.mjs                  # 没有游离的蓝色
