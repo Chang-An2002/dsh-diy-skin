@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/dsh-diy-skin?color=2f6fed)](https://www.npmjs.com/package/dsh-diy-skin) [![license](https://img.shields.io/npm/l/dsh-diy-skin)](dsh-diy-skin/LICENSE)
 
-一个给 DSH 用的 DeepSeek 品牌皮肤插件：把背景图片垫在整个界面下面、22 个配色旋钮、可以把自己的调色板存成命名方案、去白底、角落余额。零依赖，界面部分就是一个自包含的 bundle。
+一个给 DSH 用的皮肤插件：可以自己上传静态图片、GIF、壁纸（位于整个界面底部），图片可以调整位置、大小、模糊、透明度、去白底；22 个配色旋钮、可以把自定义的UI配色保存为独立方案；左下角显示当前账户余额，每15分钟刷新。零依赖，即装即用。
 
 ## 安装
 
